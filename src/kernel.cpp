@@ -1,5 +1,5 @@
-#include "types.h"
-#include "gdt.h";
+#include <types.h>
+#include <gdt.h>
 
 typedef void (*constructor)();
 
