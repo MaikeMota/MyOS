@@ -2,7 +2,7 @@ GPPPARAMS = -m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-excep
 ASPARAMS = --32
 LDPARAMS = -melf_i386
 
-objects = loader.o gdt.o kernel.o
+objects = loader.o gdt.o port.o kernel.o
 
 %.o: %.cpp
 	g++ $(GPPPARAMS) -o $@ -c $<
@@ -17,12 +17,11 @@ install: mykernel.bin
 	sudo cp $< /boot/mykernel.bin
 
 run: mykernel.bin
-	clear
 	mkdir iso
 	mkdir iso/boot
 	mkdir iso/boot/grub
 	cp $< iso/boot/
-	echo 'set timeout=3' >> iso/boot/grub/grub.cfg
+	echo 'set timeout=0' >> iso/boot/grub/grub.cfg
 	echo 'set default=0' >> iso/boot/grub/grub.cfg
 	echo '' >> iso/boot/grub/grub.cfg
 	echo 'menuentry "MyOS - By Maike Mota ;D" {' >> iso/boot/grub/grub.cfg
@@ -35,3 +34,7 @@ run: mykernel.bin
 run-linux: mykernel.iso
 	(killall VirtualBox && sleep 1) || true
 	VirtualBox --startvm "MyOS" &
+
+.PHONY: clean
+clean: 
+	rm -f $(objects) mykernel.bin mykernel.iso
