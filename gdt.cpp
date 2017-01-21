@@ -10,6 +10,7 @@ GlobalDescriptorTable::GlobalDescriptorTable() : nullSegmentSelector(0, 0, 0),
     i[0] = (uint32_t)this;
     i[1] = sizeof(GlobalDescriptorTable) << 16;
 
+    // Loads the GDT in the Processor
     asm volatile("lgdt (%0)" ::"p"(((uint8_t *)i) + 2));
 }
 
@@ -37,7 +38,6 @@ GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint3
     }
     else
     {
-
         // 32-bit address space
         // Now we have to squeeze the (32-bit) limit into 2.5 regiters (20-bit).
         // This is done by discarding the 12 least significant bits, but this
