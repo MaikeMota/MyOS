@@ -18,7 +18,8 @@ void printf(char *str);
 
 extern "C" void kernelMain(void *multiboot_structure, uint32_t magicNumber)
 {
-    printf("Bem vindo ao MyOS 0.0.1");
+    printf("Bem vindo ao MyOS 0.0.2\r\n");
+    printf("Created by: Maike Mota");
 
     GlobalDescriptorTable gdt;
 
@@ -38,9 +39,15 @@ void printf(char *str)
         switch (str[i])
         {
         case '\n':
-            x = 0;
+        {
             y++;
             break;
+        }
+        case '\r':
+        {
+            x = 0;
+            break;
+        }
         default:
             VideoMemory[80 * y + x] = (VideoMemory[80 * y + x] & 0xFF00) | str[i];
             x++;
