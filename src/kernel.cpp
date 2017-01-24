@@ -1,6 +1,7 @@
 #include <types.h>
 #include <gdt.h>
 #include <interrupts.h>
+#include <keyboard.h>
 
 typedef void (*constructor)();
 
@@ -19,16 +20,17 @@ void printf(char *str);
 
 extern "C" void kernelMain(void *multiboot_structure, uint32_t magicNumber)
 {
-    printf("Bem vindo ao MyOS 0.0.2\r\n");
+    printf("Bem vindo ao MyOS 0.0.2\n");
     printf("Created by: Maike Mota");
 
     GlobalDescriptorTable gdt;
     InterruptManager interrupts(&gdt);
 
-    
+    printf("\nRegistering Keyboard Driver");
+    KeyboardDriver keyboard(&interrupts);
 
     interrupts.Activate();
-
+    printf("\nSystem is Loaded! Have fun!");
     while (1)
     {
     }
@@ -46,14 +48,15 @@ void printf(char *str)
         {
         case '\n':
         {
+            x = 0;
             y++;
             break;
         }
-        case '\r':
+        /*case '\r':
         {
             x = 0;
             break;
-        }
+        }*/
         default:
             VideoMemory[80 * y + x] = (VideoMemory[80 * y + x] & 0xFF00) | str[i];
             x++;
