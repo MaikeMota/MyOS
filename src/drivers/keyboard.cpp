@@ -1,4 +1,9 @@
-#include <keyboard.h>
+#include <drivers/keyboard.h>
+
+
+using namespace MyOS::types;
+using namespace MyOS::drivers;
+using namespace MyOS::hardwarecommunication;
 
 #define KEYBOARD_DATA_PORT 0x60
 

@@ -1,25 +1,27 @@
-#ifndef __GDT_H
-#define __GDT_H
+#ifndef __MYOS__GDT_H
+#define __MYOS__GDT_H
 
-#include <types.h>
+#include <common/types.h>
 
+namespace MyOS
+{
 class GlobalDescriptorTable
 {
 public:
   class SegmentDescriptor
   {
   private:
-    uint16_t limit_lo;
-    uint16_t base_lo;
-    uint8_t base_hi;
-    uint8_t type;
-    uint8_t limit_hi;
-    uint8_t base_vhi;
+    MyOS::types::uint16_t limit_lo;
+    MyOS::types::uint16_t base_lo;
+    MyOS::types::uint8_t base_hi;
+    MyOS::types::uint8_t type;
+    MyOS::types::uint8_t limit_hi;
+    MyOS::types::uint8_t base_vhi;
 
   public:
-    SegmentDescriptor(uint32_t base, uint32_t limit, uint8_t type);
-    uint32_t Base();
-    uint32_t Limit();
+    SegmentDescriptor(MyOS::types::uint32_t base, MyOS::types::uint32_t limit, MyOS::types::uint8_t type);
+    MyOS::types::uint32_t Base();
+    MyOS::types::uint32_t Limit();
   } __attribute__((packed));
 
 private:
@@ -32,8 +34,8 @@ public:
   GlobalDescriptorTable();
   ~GlobalDescriptorTable();
 
-  uint16_t CodeSegmentSelector();
-  uint16_t DataSegmentSelector();
+  MyOS::types::uint16_t CodeSegmentSelector();
+  MyOS::types::uint16_t DataSegmentSelector();
 };
-
+}
 #endif

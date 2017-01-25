@@ -1,21 +1,26 @@
-#ifndef __INTERRUPTS_H
-#define __INTERRUPTS_H
+#ifndef __MYOS__HARDWARECOMMUNICATION__INTERRUPTS_H
+#define __MYOS__HARDWARECOMMUNICATION__INTERRUPTS_H
 
-#include <types.h>
-#include <port.h>
+#include <common/types.h>
+#include <hardwarecommunication/port.h>
 #include <gdt.h>
+
+namespace MyOS
+{
+namespace hardwarecommunication
+{
 class InterruptManager;
 
 class InterruptHandler
 {
   protected:
-    uint8_t InterruptNumber;
+     MyOS::types::uint8_t InterruptNumber;
     InterruptManager *interruptManager;
-    InterruptHandler(InterruptManager *interruptManager, uint8_t InterruptNumber);
+    InterruptHandler(InterruptManager *interruptManager,  MyOS::types::uint8_t InterruptNumber);
     ~InterruptHandler();
 
   public:
-    virtual uint32_t HandleInterrupt(uint32_t esp);
+    virtual  MyOS::types::uint32_t HandleInterrupt( MyOS::types::uint32_t esp);
 };
 
 class InterruptManager
@@ -29,32 +34,32 @@ class InterruptManager
 
     struct GateDescriptor
     {
-        uint16_t handlerAddressLowBits;
-        uint16_t gdt_codeSegmentSelector;
-        uint8_t reserved;
-        uint8_t access;
-        uint16_t handlerAddressHighBits;
+        MyOS::types::uint16_t handlerAddressLowBits;
+        MyOS::types::uint16_t gdt_codeSegmentSelector;
+        MyOS::types::uint8_t reserved;
+        MyOS::types::uint8_t access;
+        MyOS::types::uint16_t handlerAddressHighBits;
     } __attribute__((packed));
 
     static GateDescriptor interruptDescriptorTable[256];
 
     struct InterruptDescriptorTablePointer
     {
-        uint16_t size;
-        uint32_t base;
+        MyOS::types::uint16_t size;
+        MyOS::types::uint32_t base;
     } __attribute__((packed));
 
-    uint16_t hardwareInterruptOffset;
-    static void SetInterruptDescriptorTableEntry(uint8_t interrupt,
-                                                 uint16_t codeSegmentSelectorOffset, void (*handler)(),
-                                                 uint8_t DescriptorPrivilegeLevel, uint8_t DescriptorType);
+     MyOS::types::uint16_t hardwareInterruptOffset;
+    static void SetInterruptDescriptorTableEntry(MyOS::types::uint8_t interrupt,
+                                                 MyOS::types::uint16_t codeSegmentSelectorOffset, void (*handler)(),
+                                                 MyOS::types::uint8_t DescriptorPrivilegeLevel, MyOS::types::uint8_t DescriptorType);
 
     static void InterruptIgnore();
 
     static void HandleInterruptRequest0x00();
     static void HandleInterruptRequest0x01();
     static void HandleInterruptRequest0x02();
-/*    static void HandleInterruptRequest0x03();
+    /*    static void HandleInterruptRequest0x03();
     static void HandleInterruptRequest0x04();
     static void HandleInterruptRequest0x05();
     static void HandleInterruptRequest0x06();
@@ -92,20 +97,21 @@ class InterruptManager
     static void HandleException0x12();
     static void HandleException0x13();*/
 
-    static uint32_t HandleInterrupt(uint8_t interrupt, uint32_t esp);
-    uint32_t DoHandleInterrupt(uint8_t interrupt, uint32_t esp);
+    static MyOS::types::uint32_t HandleInterrupt(MyOS::types::uint8_t interrupt, MyOS::types::uint32_t esp);
+    MyOS::types::uint32_t DoHandleInterrupt(MyOS::types::uint8_t interrupt, MyOS::types::uint32_t esp);
 
-    Port8BitSlow programmableInterruptControllerMasterCommandPort;
-    Port8BitSlow programmableInterruptControllerMasterDataPort;
-    Port8BitSlow programmableInterruptControllerSlaveCommandPort;
-    Port8BitSlow programmableInterruptControllerSlaveDataPort;
+    MyOS::hardwarecommunication::Port8BitSlow programmableInterruptControllerMasterCommandPort;
+    MyOS::hardwarecommunication::Port8BitSlow programmableInterruptControllerMasterDataPort;
+    MyOS::hardwarecommunication::Port8BitSlow programmableInterruptControllerSlaveCommandPort;
+    MyOS::hardwarecommunication::Port8BitSlow programmableInterruptControllerSlaveDataPort;
 
   public:
-    InterruptManager(uint16_t hardwareInterruptOffset, GlobalDescriptorTable *globalDescriptorTable /*, TaskManager *taskManager*/);
+    InterruptManager(MyOS::types::uint16_t hardwareInterruptOffset, MyOS::GlobalDescriptorTable *globalDescriptorTable /*, TaskManager *taskManager*/);
     ~InterruptManager();
-    uint16_t HardwareInterruptOffset();
+    MyOS::types::uint16_t HardwareInterruptOffset();
     void Activate();
     void Deactivate();
 };
-
+}
+}
 #endif

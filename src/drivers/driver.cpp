@@ -1,4 +1,7 @@
-#include <driver.h>
+#include <drivers/driver.h>
+
+using namespace MyOS::types;
+using namespace MyOS::drivers;
 
 void printf(char *);
 void printfHex(uint8_t);

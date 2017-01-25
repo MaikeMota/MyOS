@@ -1,9 +1,14 @@
-#include <types.h>
+#include <common/types.h>
 #include <gdt.h>
-#include <interrupts.h>
-#include <keyboard.h>
-#include <mouse.h>
-#include <driver.h>
+#include <hardwarecommunication/interrupts.h>
+#include <drivers/driver.h>
+#include <drivers/keyboard.h>
+#include <drivers/mouse.h>
+
+using namespace MyOS;
+using namespace MyOS::types;
+using namespace MyOS::drivers;
+using namespace MyOS::hardwarecommunication;
 
 typedef void (*constructor)();
 
@@ -153,7 +158,7 @@ void printf(char *str)
     }
 }
 
-void printfHex(uint8_t key)
+void printfHex(MyOS::types::uint8_t key)
 {
     char *foo = "00";
     char *hex = "0123456789ABCDEF";

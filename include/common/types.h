@@ -1,5 +1,10 @@
-#ifndef __TYPES_H
-#define __TYPES_H
+#ifndef __MYOS__COMMON__TYPES_H
+#define __MYOS__COMMON__TYPES_H
+
+namespace MyOS
+{
+namespace types
+{
 
 typedef char int8_t;
 typedef unsigned char uint8_t;
@@ -12,5 +17,6 @@ typedef unsigned long long int uint64_t;
 
 typedef const char *string;
 typedef uint32_t size_t;
-
+}
+}
 #endif

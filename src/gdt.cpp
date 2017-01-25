@@ -1,5 +1,8 @@
 #include <gdt.h>
 
+using namespace MyOS;
+using namespace MyOS::types;
+
 void printf(char *);
 
 GlobalDescriptorTable::GlobalDescriptorTable()

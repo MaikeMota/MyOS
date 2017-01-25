@@ -1,4 +1,8 @@
-#include <mouse.h>
+#include <drivers/mouse.h>
+
+using namespace MyOS::types;
+using namespace MyOS::drivers;
+using namespace MyOS::hardwarecommunication;
 
 #define MOUSE_DATA_PORT 0x60
 #define MOUSE_COMMAND_PORT 0x64

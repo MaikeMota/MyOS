@@ -4,12 +4,12 @@ LDPARAMS = -melf_i386
 
 objects = obj/loader.o \
 		obj/gdt.o \
-		obj/driver.o \
-		obj/port.o \
-		obj/interruptstubs.o \
-		obj/interrupts.o \
-		obj/keyboard.o \
-		obj/mouse.o \
+		obj/hardwarecommunication/port.o \
+		obj/hardwarecommunication/interruptstubs.o \
+		obj/hardwarecommunication/interrupts.o \
+		obj/drivers/driver.o \
+		obj/drivers/keyboard.o \
+		obj/drivers/mouse.o \
 		obj/kernel.o
 
 obj/%.o: src/%.cpp
@@ -34,9 +34,10 @@ run: mykernel.bin
 	echo 'menuentry "MyOS - By Maike Mota ;D" {' >> iso/boot/grub/grub.cfg
 	echo '	multiboot /boot/mykernel.bin' >> iso/boot/grub/grub.cfg
 	echo '	boot' >> iso/boot/grub/grub.cfg
-	echo '}' >> iso/boot/grub/grub.cfg
-	grub-mkrescue --output=mykernel.iso iso
+	echo '}' >> iso/boot/grub/grub.cfg	
+	grub-mkrescue --output=bin/mykernel.iso iso
 	rm -rf iso
+	rm -rf mykernel.bin
 
 run-linux: mykernel.iso
 	(killall VirtualBox && sleep 1) || true
@@ -44,4 +45,4 @@ run-linux: mykernel.iso
 
 .PHONY: clean
 clean: 
-	rm -f $(objects) mykernel.bin mykernel.iso
+	rm -rf obj mykernel.bin mykernel.iso

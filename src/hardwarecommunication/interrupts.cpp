@@ -1,4 +1,7 @@
-#include <interrupts.h>
+#include <hardwarecommunication/interrupts.h>
+
+using namespace MyOS::types;
+using namespace MyOS::hardwarecommunication;
 
 void printf(char *);
 void printfHex(uint8_t);
