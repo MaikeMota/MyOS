@@ -23,6 +23,7 @@ class DriverManager
   public:
     DriverManager();
     void ActivateAll();
+    void DeactivateAll();
     void AddDriver(Driver *driver);
 };
 

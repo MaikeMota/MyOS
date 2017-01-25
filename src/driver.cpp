@@ -37,8 +37,20 @@ void DriverManager::ActivateAll()
     for (int i = 0; i < numDrivers; i++)
     {
         drivers[i]->Activate();
-        printf("\nInitialized driver ");
-        printfHex(i+1);
+        printf("\nActivated driver ");
+        printfHex(i + 1);
+        printf(" of ");
+        printfHex(numDrivers);
+    }
+}
+
+void DriverManager::DeactivateAll()
+{
+    for (int = 0; i < numDrivers; i++)
+    {
+        drivers[i]->Deactivate();
+        printf("\nDeactivate driver ");
+        printfHex(i + 1);
         printf(" of ");
         printfHex(numDrivers);
     }
