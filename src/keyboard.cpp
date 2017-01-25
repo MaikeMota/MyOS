@@ -2,14 +2,21 @@
 
 #define KEYBOARD_DATA_PORT 0x60
 
+void printf(char *);
+void printfHex(uint8_t);
+
 KeyboardDriver::KeyboardDriver(InterruptManager *interruptManager)
-    : InterruptHandler(0x21, interruptManager),
+    : InterruptHandler(interruptManager, 0x21),
       dataPort(KEYBOARD_DATA_PORT),
       commandPort(0x64)
 {
-    while (commandPort.Read() & 0x1)
+    uint8_t command = commandPort.Read();
+    while (command & 0x1)
     {
-        dataPort.Read();
+        printfHex(command);
+        uint8_t value = dataPort.Read();
+        printfHex(value);
+        command = commandPort.Read();
     }
     commandPort.Write(0xAE); // Active Interrupts
     commandPort.Write(0x20); // Get current State
@@ -58,6 +65,5 @@ uint32_t KeyboardDriver::HandleInterrupt(uint32_t esp)
         }
         }
     }
-
     return esp;
 }
