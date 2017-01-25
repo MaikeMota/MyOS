@@ -46,7 +46,7 @@ void DriverManager::ActivateAll()
 
 void DriverManager::DeactivateAll()
 {
-    for (int = 0; i < numDrivers; i++)
+    for (int i = 0; i < numDrivers; i++)
     {
         drivers[i]->Deactivate();
         printf("\nDeactivate driver ");
