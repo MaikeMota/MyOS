@@ -3,6 +3,7 @@
 #include <interrupts.h>
 #include <keyboard.h>
 #include <mouse.h>
+#include <driver.h>
 
 typedef void (*constructor)();
 
@@ -24,15 +25,24 @@ extern "C" void kernelMain(void *multiboot_structure, uint32_t magicNumber)
     printf("Bem vindo ao MyOS 0.0.2\n");
     printf("Created by: Maike Mota");
 
+    printf("\n\nInitializing Hardware Stage 1");
     GlobalDescriptorTable gdt;
     InterruptManager interrupts(0x20, &gdt);
 
-    printf("\nRegistering Keyboard Driver");
+    DriverManager driverManager;
+
+    printf("\nInitializing Keyboard Driver...");
     KeyboardDriver keyboard(&interrupts);
+    driverManager.AddDriver(&keyboard);
 
-    printf("\nRegistering Mouse Driver");
+    printf("\nRegistering Mouse Driver...");
     MouseDriver mouse(&interrupts);
+    driverManager.AddDriver(&mouse);
 
+    printf("\n\nInitializing Hardware Stage 2");
+    driverManager.ActivateAll();
+
+    printf("\n\nInitializing Hardware Stage 3");
     interrupts.Activate();
     printf("\nSystem is Loaded! Have fun!");
 

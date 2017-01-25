@@ -11,7 +11,14 @@ MouseDriver::MouseDriver(InterruptManager *interruptManager)
       dataPort(MOUSE_DATA_PORT),
       commandPort(MOUSE_COMMAND_PORT)
 {
+}
 
+MouseDriver::~MouseDriver()
+{
+}
+
+void MouseDriver::Activate()
+{
     offset = 0;
     buttons = 0;
 
@@ -29,10 +36,6 @@ MouseDriver::MouseDriver(InterruptManager *interruptManager)
     commandPort.Write(0xD4);
     dataPort.Write(0xF4);
     dataPort.Read();
-}
-
-MouseDriver::~MouseDriver()
-{
 }
 
 void printf(char *);

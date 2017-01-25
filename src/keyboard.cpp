@@ -10,6 +10,14 @@ KeyboardDriver::KeyboardDriver(InterruptManager *interruptManager)
       dataPort(KEYBOARD_DATA_PORT),
       commandPort(0x64)
 {
+}
+
+KeyboardDriver::~KeyboardDriver()
+{
+}
+
+void KeyboardDriver::Activate()
+{
     uint8_t command = commandPort.Read();
     while (command & 0x1)
     {
@@ -25,10 +33,6 @@ KeyboardDriver::KeyboardDriver(InterruptManager *interruptManager)
     dataPort.Write(status);
 
     dataPort.Write(0xF4);
-}
-
-KeyboardDriver::~KeyboardDriver()
-{
 }
 
 void printf(char *);
