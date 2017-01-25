@@ -8,6 +8,7 @@ objects = obj/loader.o \
 		obj/interruptstubs.o \
 		obj/interrupts.o \
 		obj/keyboard.o \
+		obj/mouse.o \
 		obj/kernel.o
 
 obj/%.o: src/%.cpp
