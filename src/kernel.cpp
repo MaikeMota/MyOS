@@ -20,6 +20,64 @@ extern "C" void callConstructors()
 
 void printf(char *str);
 
+class PrintfKeyboardEventHandler : public KeyboardEventHandler
+{
+  public:
+    void onKeyDown(char key)
+    {
+        char *value = " ";
+        value[0] = key;
+        printf(value);
+    }
+};
+
+class MouseToConsole : public MouseEventHandler
+{
+
+    uint8_t x, y;
+
+  public:
+    void OnActivate()
+    {
+
+        uint8_t x = 40, y = 12;
+
+        static uint16_t *VideoMemory = (uint16_t *)0xB8000;
+        VideoMemory[80 * y + x] = ((VideoMemory[80 * y + x] & 0xF000) >> 4) | ((VideoMemory[80 * y + x] & 0x0F00) << 4) | (VideoMemory[80 * y + x] & 0x00FF);
+    }
+    void OnMouseMove(int xOffset, int yOffset)
+    {
+        static uint16_t *VideoMemory = (uint16_t *)0xB8000;
+
+        VideoMemory[80 * y + x] = ((VideoMemory[80 * y + x] & 0xF000) >> 4) | ((VideoMemory[80 * y + x] & 0x0F00) << 4) | (VideoMemory[80 * y + x] & 0x00FF);
+
+        x += xOffset;
+
+        if (x < 0)
+        {
+            x = 0;
+        }
+        else if (x > 80)
+        {
+            x = 80;
+        }
+
+        y -= yOffset;
+
+        if (y < 0)
+        {
+            y = 0;
+        }
+        else if (y > 25)
+        {
+            y = 24;
+        }
+
+        VideoMemory[80 * y + x] = ((VideoMemory[80 * y + x] & 0xF000) >> 4) | ((VideoMemory[80 * y + x] & 0x0F00) << 4) | (VideoMemory[80 * y + x] & 0x00FF);
+    }
+    void OnMouseDown(uint8_t button) {}
+};
+
 extern "C" void kernelMain(void *multiboot_structure, uint32_t magicNumber)
 {
     printf("Bem vindo ao MyOS 0.0.2\n");
@@ -31,18 +89,18 @@ extern "C" void kernelMain(void *multiboot_structure, uint32_t magicNumber)
 
     DriverManager driverManager;
 
-    printf("\nInitializing Keyboard Driver...");
-    KeyboardDriver keyboard(&interrupts);
+    PrintfKeyboardEventHandler keyboardEventHandler;
+    KeyboardDriver keyboard(&interrupts, &keyboardEventHandler);
     driverManager.AddDriver(&keyboard);
 
-    printf("\nRegistering Mouse Driver...");
-    MouseDriver mouse(&interrupts);
+    MouseToConsole mouseToConsole;
+    MouseDriver mouse(&interrupts, &mouseToConsole);
     driverManager.AddDriver(&mouse);
 
-    printf("\n\nInitializing Hardware Stage 2");
+    printf("\n\nInitializing Hardware Stage 2\n");
     driverManager.ActivateAll();
 
-    printf("\n\nInitializing Hardware Stage 3");
+    printf("\n\nInitializing Hardware Stage 3\n");
     interrupts.Activate();
     printf("\nSystem is Loaded! Have fun!");
 

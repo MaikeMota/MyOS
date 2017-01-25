@@ -8,8 +8,6 @@ InterruptHandler::InterruptHandler(InterruptManager *interruptManager, uint8_t I
     this->InterruptNumber = InterruptNumber;
     this->interruptManager = interruptManager;
     interruptManager->handlers[InterruptNumber] = this;
-    printf("\nRegistered Interrupt ");
-    printfHex(InterruptNumber);
 }
 
 InterruptHandler::~InterruptHandler()
@@ -20,7 +18,6 @@ InterruptHandler::~InterruptHandler()
 
 uint32_t InterruptHandler::HandleInterrupt(uint32_t esp)
 {
-    printf("\n InterruptHandler::HandleInterrupt(uint32_t esp)");
     return esp;
 }
 
@@ -173,11 +170,6 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t interrupt, uint32_t esp)
     {
         printf("UNHANDLED INTERRUPT 0x");
         printfHex(interrupt);
-    }
-
-    if (interrupt == hardwareInterruptOffset)
-    {
-        //esp = (uint32_t)taskManager->Schedule((CPUState *)esp);
     }
 
     // hardware interrupts must be acknowledged
