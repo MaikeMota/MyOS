@@ -29,8 +29,7 @@ uint32_t InterruptHandler::HandleInterrupt(uint32_t esp)
 InterruptManager::GateDescriptor InterruptManager::interruptDescriptorTable[256];
 InterruptManager *InterruptManager::ActiveInterruptManager = 0;
 
-void InterruptManager::SetInterruptDescriptorTableEntry(uint8_t interrupt,
-                                                        uint16_t CodeSegment, void (*handler)(), uint8_t DescriptorPrivilegeLevel, uint8_t DescriptorType)
+void InterruptManager::SetInterruptDescriptorTableEntry(uint8_t interrupt, uint16_t CodeSegment, void (*handler)(), uint8_t DescriptorPrivilegeLevel, uint8_t DescriptorType)
 {
     // address of pointer to code segment (relative to global descriptor table)
     // and address of the handler (relative to segment)
@@ -96,7 +95,7 @@ InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset, GlobalDescr
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0A, CodeSegment, &HandleInterruptRequest0x0A, 0, IDT_INTERRUPT_GATE);
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0B, CodeSegment, &HandleInterruptRequest0x0B, 0, IDT_INTERRUPT_GATE);*/
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0C, CodeSegment, &HandleInterruptRequest0x0C, 0, IDT_INTERRUPT_GATE);
-   /* SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0D, CodeSegment, &HandleInterruptRequest0x0D, 0, IDT_INTERRUPT_GATE);
+    /* SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0D, CodeSegment, &HandleInterruptRequest0x0D, 0, IDT_INTERRUPT_GATE);
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0E, CodeSegment, &HandleInterruptRequest0x0E, 0, IDT_INTERRUPT_GATE);
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0F, CodeSegment, &HandleInterruptRequest0x0F, 0, IDT_INTERRUPT_GATE);
 
@@ -164,14 +163,14 @@ uint32_t InterruptManager::HandleInterrupt(uint8_t interrupt, uint32_t esp)
 
 uint32_t InterruptManager::DoHandleInterrupt(uint8_t interrupt, uint32_t esp)
 {
-   /* if (interrupt > 0x20)
+    /* if (interrupt > 0x20)
     {
         printf("\nInterrupt Code: ");
         printfHex(interrupt);
     }*/
     if (handlers[interrupt] != 0)
     {
-       //printf("\nFound interrupt handler");
+        //printf("\nFound interrupt handler");
         esp = handlers[interrupt]->HandleInterrupt(esp);
     }
     else if (interrupt != hardwareInterruptOffset)
