@@ -4,9 +4,6 @@ using namespace MyOS::types;
 using namespace MyOS::drivers;
 using namespace MyOS::hardwarecommunication;
 
-#define MOUSE_DATA_PORT 0x60
-#define MOUSE_COMMAND_PORT 0x64
-
 MouseEventHandler::MouseEventHandler()
 {
 }
@@ -20,8 +17,8 @@ void MouseEventHandler::OnMouseMove(int xOffset, int yOffset) {}
 
 MouseDriver::MouseDriver(InterruptManager *interruptManager, MouseEventHandler *mouseEventHandler)
     : InterruptHandler(interruptManager, 0x2C),
-      dataPort(MOUSE_DATA_PORT),
-      commandPort(MOUSE_COMMAND_PORT)
+      dataPort(0x60),
+      commandPort(0x64)
 {
     this->eventHandler = mouseEventHandler;
 }
@@ -35,6 +32,11 @@ void MouseDriver::Activate()
     offset = 0;
     buttons = 0;
 
+    if (eventHandler != 0)
+    {
+        eventHandler->OnActivate();
+    }
+
     commandPort.Write(0xA8); // Active Interrupts
     commandPort.Write(0x20); // Get current State
     uint8_t status = (dataPort.Read() | 2);
@@ -44,16 +46,18 @@ void MouseDriver::Activate()
     commandPort.Write(0xD4);
     dataPort.Write(0xF4);
     dataPort.Read();
-
-    if (eventHandler != 0)
-    {
-        eventHandler->OnActivate();
-    }
 }
+
+void printf(char *);
+void printfHex(uint8_t);
 
 uint32_t MouseDriver::HandleInterrupt(uint32_t esp)
 {
     uint8_t status = commandPort.Read();
+
+   /* printf("\nMouse status: ");
+    printfHex(status);*/
+
     if (!(status & 0x20))
     {
         return esp;
@@ -73,7 +77,7 @@ uint32_t MouseDriver::HandleInterrupt(uint32_t esp)
 
         if (buffer[1] != 0 || buffer[2] != 0)
         {
-            eventHandler->OnMouseMove(buffer[1], -buffer[2]);
+            eventHandler->OnMouseMove(buffer[1], -(buffer[2]));
         }
 
         for (uint8_t i = 0; i < 3; i++)

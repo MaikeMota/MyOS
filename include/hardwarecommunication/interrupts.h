@@ -67,9 +67,9 @@ class InterruptManager
     static void HandleInterruptRequest0x08();
     static void HandleInterruptRequest0x09();
     static void HandleInterruptRequest0x0A();
-    static void HandleInterruptRequest0x0B();
+    static void HandleInterruptRequest0x0B();*/
     static void HandleInterruptRequest0x0C();
-    static void HandleInterruptRequest0x0D();
+    /*static void HandleInterruptRequest0x0D();
     static void HandleInterruptRequest0x0E();
     static void HandleInterruptRequest0x0F();
     static void HandleInterruptRequest0x31();

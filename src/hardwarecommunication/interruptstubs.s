@@ -13,6 +13,7 @@ _ZN16InterruptManager16HandleException\num\()Ev:
 .global _ZN4MyOS21hardwarecommunication16InterruptManager26HandleInterruptRequest\num\()Ev
 _ZN4MyOS21hardwarecommunication16InterruptManager26HandleInterruptRequest\num\()Ev:
     movb $\num + IRQ_BASE, (interruptNumber)
+    pushl $0
     jmp int_bottom
 .endm
 
@@ -20,7 +21,11 @@ HandleInterruptRequest 0x00
 HandleInterruptRequest 0x01
 HandleInterruptRequest 0x02
 
+
+HandleInterruptRequest 0x0C
+
 int_bottom:
+   
     # save registers
     #pusha
     #pushl %ds
