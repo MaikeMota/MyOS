@@ -6,11 +6,13 @@ using namespace MyOS::hardwarecommunication;
 void printf(char *);
 void printfHex(uint8_t);
 
-InterruptHandler::InterruptHandler(InterruptManager *interruptManager, uint8_t InterruptNumber)
+InterruptHandler::InterruptHandler(InterruptManager *interruptManager, uint8_t interruptNumber)
 {
-    this->InterruptNumber = InterruptNumber;
+    this->InterruptNumber = interruptNumber;
     this->interruptManager = interruptManager;
-    interruptManager->handlers[InterruptNumber] = this;
+    interruptManager->handlers[interruptNumber] = this;
+    printf("\nRegistered interrupt for code: ");
+    printfHex(interruptNumber);
 }
 
 InterruptHandler::~InterruptHandler()
@@ -52,7 +54,7 @@ InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset, GlobalDescr
     uint32_t CodeSegment = globalDescriptorTable->CodeSegmentSelector();
 
     const uint8_t IDT_INTERRUPT_GATE = 0xE;
-    for (uint8_t i = 255; i > 0; --i)
+    for (int i = 0xFF; i > 0x00; i--)
     {
         SetInterruptDescriptorTableEntry(i, CodeSegment, &InterruptIgnore, 0, IDT_INTERRUPT_GATE);
         handlers[i] = 0;
@@ -92,9 +94,9 @@ InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset, GlobalDescr
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x08, CodeSegment, &HandleInterruptRequest0x08, 0, IDT_INTERRUPT_GATE);
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x09, CodeSegment, &HandleInterruptRequest0x09, 0, IDT_INTERRUPT_GATE);
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0A, CodeSegment, &HandleInterruptRequest0x0A, 0, IDT_INTERRUPT_GATE);
-    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0B, CodeSegment, &HandleInterruptRequest0x0B, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0B, CodeSegment, &HandleInterruptRequest0x0B, 0, IDT_INTERRUPT_GATE);*/
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0C, CodeSegment, &HandleInterruptRequest0x0C, 0, IDT_INTERRUPT_GATE);
-    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0D, CodeSegment, &HandleInterruptRequest0x0D, 0, IDT_INTERRUPT_GATE);
+   /* SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0D, CodeSegment, &HandleInterruptRequest0x0D, 0, IDT_INTERRUPT_GATE);
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0E, CodeSegment, &HandleInterruptRequest0x0E, 0, IDT_INTERRUPT_GATE);
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0F, CodeSegment, &HandleInterruptRequest0x0F, 0, IDT_INTERRUPT_GATE);
 
@@ -162,11 +164,14 @@ uint32_t InterruptManager::HandleInterrupt(uint8_t interrupt, uint32_t esp)
 
 uint32_t InterruptManager::DoHandleInterrupt(uint8_t interrupt, uint32_t esp)
 {
-    printf("\nInterrupt Code: ");
-    printfHex(interrupt);
+   /* if (interrupt > 0x20)
+    {
+        printf("\nInterrupt Code: ");
+        printfHex(interrupt);
+    }*/
     if (handlers[interrupt] != 0)
     {
-        printf("\nFound interrupt handler");
+       //printf("\nFound interrupt handler");
         esp = handlers[interrupt]->HandleInterrupt(esp);
     }
     else if (interrupt != hardwareInterruptOffset)
@@ -178,10 +183,11 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t interrupt, uint32_t esp)
     // hardware interrupts must be acknowledged
     if (hardwareInterruptOffset <= interrupt && interrupt < hardwareInterruptOffset + 16)
     {
+        //printf("\nSending acknowledged to programmableInterruptControllerMasterCommandPort");
         programmableInterruptControllerMasterCommandPort.Write(0x20);
         if (hardwareInterruptOffset + 8 <= interrupt)
         {
-            printf("\nhardwareInterruptOffset + 8 <= interrupt: ");
+            //printf("\nSending acknowledged to programmableInterruptControllerSlaveCommandPort");
             programmableInterruptControllerSlaveCommandPort.Write(0x20);
         }
     }
