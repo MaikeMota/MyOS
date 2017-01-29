@@ -28,7 +28,7 @@ void printf(char *str);
 class PrintfKeyboardEventHandler : public KeyboardEventHandler
 {
   public:
-    void onKeyDown(char key)
+    void OnKeyDown(char key)
     {
         char *value = " ";
         value[0] = key;
@@ -116,7 +116,7 @@ extern "C" void kernelMain(void *multiboot_structure, uint32_t magicNumber)
 
 void printf(char *str)
 {
-    static uint16_t *VideoMemory = (uint16_t *)0xb8000;
+    static uint16_t *VideoMemory = (uint16_t *)0xB8000;
 
     static uint8_t x = 0, y = 0;
 
