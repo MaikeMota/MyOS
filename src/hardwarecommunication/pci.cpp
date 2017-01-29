@@ -73,10 +73,10 @@ void PeripheralComponentInterconnectController::SelectDrivers(DriverManager *dri
                 printfHex(function & 0xFF);
                 printf(", VENDOR ");
                 printfHex((descriptor.vendor_id & 0xFF00) >> 8);
-                printfHex((descriptor.device_id & 0xFF) >> 8);
+                printfHex((descriptor.vendor_id & 0xFF));
                 printf(", DEVICE ");
                 printfHex((descriptor.device_id & 0xFF00) >> 8);
-                printfHex((descriptor.device_id & 0xFF) >> 8);
+                printfHex((descriptor.device_id & 0xFF));
                 printf("\n");
             }
         }
