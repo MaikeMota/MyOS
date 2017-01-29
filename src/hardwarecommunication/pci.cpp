@@ -49,7 +49,7 @@ bool PeripheralComponentInterconnectController::DeviceHasFunctions(uint16_t bus,
 void printf(char *);
 void printfHex(uint8_t);
 
-void PeripheralComponentInterconnectController::SelectDrivers(DriverManager *driverManager)
+void PeripheralComponentInterconnectController::SelectDrivers(DriverManager *driverManager, InterruptManager* interruptManager)
 {
 
     printf("\n");
@@ -60,11 +60,27 @@ void PeripheralComponentInterconnectController::SelectDrivers(DriverManager *dri
             int numFunctions = DeviceHasFunctions(bus, device) ? 8 : 1;
             for (int function = 0; function < numFunctions; function++)
             {
-                PeripheralComponentInterconnectDeviceDescriptor descriptor = GetDeviceDescriptor(bus, device, function);
-                if (descriptor.vendor_id == 0x0000 | descriptor.vendor_id == 0xFFFF)
+                PeripheralComponentInterconnectDeviceDescriptor deviceDescriptor = GetDeviceDescriptor(bus, device, function);
+                if (deviceDescriptor.vendor_id == 0x0000 | deviceDescriptor.vendor_id == 0xFFFF)
                 {
                     continue;
                 }
+
+                for (int barNum = 0; barNum < 6; barNum++)
+                {
+                    BaseAddressRegister bar = GetBaseAddressRegister(bus, device, function, barNum);
+                    if (bar.address && (bar.type == InputOutput))
+                    {
+                        deviceDescriptor.basePort = (uint32_t)bar.address;
+                    }
+
+                    Driver *driver = GetDriver(deviceDescriptor, interruptManager);
+                    if (driver != 0)
+                    {
+                        driverManager->AddDriver(driver);
+                    }
+                }
+
                 printf("PCI BUS ");
                 printfHex(bus & 0xFF);
                 printf(", DEVICE ");
@@ -72,11 +88,11 @@ void PeripheralComponentInterconnectController::SelectDrivers(DriverManager *dri
                 printf(", FUNCTION ");
                 printfHex(function & 0xFF);
                 printf(", VENDOR ");
-                printfHex((descriptor.vendor_id & 0xFF00) >> 8);
-                printfHex((descriptor.vendor_id & 0xFF));
+                printfHex((deviceDescriptor.vendor_id & 0xFF00) >> 8);
+                printfHex((deviceDescriptor.vendor_id & 0xFF));
                 printf(", DEVICE ");
-                printfHex((descriptor.device_id & 0xFF00) >> 8);
-                printfHex((descriptor.device_id & 0xFF));
+                printfHex((deviceDescriptor.device_id & 0xFF00) >> 8);
+                printfHex((deviceDescriptor.device_id & 0xFF));
                 printf("\n");
             }
         }
@@ -100,6 +116,90 @@ PeripheralComponentInterconnectDeviceDescriptor PeripheralComponentInterconnectC
 
     result.revision = Read(bus, device, function, 0x08);
     result.interrupt = Read(bus, device, function, 0x3C);
+
+    return result;
+}
+
+Driver *PeripheralComponentInterconnectController::GetDriver(PeripheralComponentInterconnectDeviceDescriptor deviceDescriptor, InterruptManager *interruptManager)
+{
+
+    switch (deviceDescriptor.vendor_id)
+    {
+    case 0x1022: //AMD
+    {
+        switch (deviceDescriptor.device_id)
+        {
+        case 0x2000: // am79c973
+        {
+            break;
+        }
+        }
+
+        break;
+    }
+    case 0x8086: // Intel
+    {
+        break;
+    }
+    }
+
+    switch (deviceDescriptor.class_id)
+    {
+    case 0x03: // Graphics
+    {
+        switch (deviceDescriptor.subclass_id)
+        {
+        case 0x00: // VGA
+        {
+            break;
+        }
+        }
+        break;
+    }
+    }
+
+    return 0;
+}
+
+BaseAddressRegister PeripheralComponentInterconnectController::GetBaseAddressRegister(uint16_t bus, uint16_t device, uint16_t function, uint16_t bar)
+{
+    BaseAddressRegister result;
+
+    uint32_t headerType = Read(bus, device, function, 0x0E) & 0x7F;
+    int maxBARs = 6 - (4 * headerType);
+    if (bar >= maxBARs)
+    {
+        return result;
+    }
+
+    uint32_t bar_value = Read(bus, device, function, 0x10 + 4 * bar);
+    result.type = (bar_value & 0x1) ? InputOutput : MemoryMapping;
+    uint32_t temp;
+
+    if (result.type == MemoryMapping)
+    {
+        switch ((bar_value >> 1) & 0x3)
+        {
+        //TODO HANDLE
+        case 0x0: // 32Bit mode
+        {
+            break;
+        }
+        case 0x1: //20Bit mode
+        {
+            break;
+        }
+        case 0x2: //64Bit mode
+        {
+            break;
+        }
+        }
+    }
+    else // InputOutput
+    {
+        result.address = (uint8_t *)(bar_value & ~0x3);
+        result.prefetchable = false;
+    }
 
     return result;
 }

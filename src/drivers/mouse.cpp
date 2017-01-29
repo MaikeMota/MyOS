@@ -55,7 +55,7 @@ uint32_t MouseDriver::HandleInterrupt(uint32_t esp)
 {
     uint8_t status = commandPort.Read();
 
-   /* printf("\nMouse status: ");
+    /* printf("\nMouse status: ");
     printfHex(status);*/
 
     if (!(status & 0x20))
@@ -77,7 +77,7 @@ uint32_t MouseDriver::HandleInterrupt(uint32_t esp)
 
         if (buffer[1] != 0 || buffer[2] != 0)
         {
-            eventHandler->OnMouseMove(buffer[1], -(buffer[2]));
+            eventHandler->OnMouseMove(buffer[1], buffer[2]);
         }
 
         for (uint8_t i = 0; i < 3; i++)
