@@ -1,6 +1,5 @@
 #include <drivers/keyboard.h>
 
-
 using namespace MyOS::types;
 using namespace MyOS::drivers;
 using namespace MyOS::hardwarecommunication;
@@ -47,8 +46,6 @@ void KeyboardDriver::Activate()
 
     dataPort.Write(0xF4);
 }
-
-void printf(char *);
 
 uint32_t KeyboardDriver::HandleInterrupt(uint32_t esp)
 {
