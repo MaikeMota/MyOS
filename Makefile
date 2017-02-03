@@ -9,6 +9,7 @@ objects = obj/loader.o \
 		obj/hardwarecommunication/interrupts.o \
 		obj/hardwarecommunication/pci.o \
 		obj/drivers/driver.o \
+		obj/drivers/vga.o \
 		obj/drivers/keyboard.o \
 		obj/drivers/mouse.o \
 		obj/kernel.o
